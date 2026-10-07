@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RLLS Research Prototype</title>
+  <style>
+    :root { --ink:#17342e; --muted:#61716b; --bg:#f3f6f1; --panel:#ffffff; --line:#d9e4da; --green:#1f7a52; --green-soft:#e5f3e9; --amber:#ad6508; --amber-soft:#fff0dc; --blue:#196c88; --blue-soft:#e7f3f7; --red:#b42318; --red-soft:#fdeaea; --purple:#7254a4; }
+    * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--ink); font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    main { max-width:1140px; margin:auto; padding:30px 22px 46px; } h1,h2,h3,p { margin:0; } h1 { font-size:32px; letter-spacing:-.9px; } h2 { font-size:17px; } h3 { font-size:14px; } p { line-height:1.55; }
+    header { display:flex; justify-content:space-between; gap:18px; align-items:start; margin-bottom:22px; } .subtitle { color:var(--muted); max-width:750px; margin-top:8px; } .badge { background:var(--green-soft); color:var(--green); border-radius:999px; padding:7px 11px; white-space:nowrap; font-size:12px; font-weight:750; }
+    .notice { padding:12px 14px; background:#edf5ef; border-left:4px solid var(--green); border-radius:8px; margin-bottom:18px; color:#345044; font-size:14px; }
+    .layout { display:grid; grid-template-columns:1.05fr .95fr; gap:18px; } .card { background:var(--panel); border:1px solid var(--line); border-radius:15px; padding:20px; box-shadow:0 8px 20px rgba(18,52,38,.04); } .span2 { grid-column:span 2; }
+    .section-head { display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:15px; } .small { color:var(--muted); font-size:12px; } .muted { color:var(--muted); }
+    .input-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; } label { display:block; font-weight:700; color:var(--muted); font-size:12px; } input { width:100%; margin-top:7px; padding:10px; border:1px solid #c6d5c8; border-radius:8px; color:var(--ink); font:inherit; font-size:16px; background:#fff; } .field-note { font-size:11px; color:var(--muted); margin-top:5px; line-height:1.35; }
+    .actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:15px; } button { cursor:pointer; border:0; border-radius:8px; padding:9px 11px; color:var(--ink); background:#ebf0eb; font:inherit; font-size:12px; font-weight:700; } button:hover { background:#dce8de; }
+    .result { min-height:218px; display:flex; flex-direction:column; justify-content:space-between; } .chip { display:inline-block; border-radius:999px; padding:7px 10px; font-weight:800; font-size:12px; } .irrigate { background:var(--amber-soft); color:var(--amber); } .monitor { background:var(--blue-soft); color:var(--blue); } .wait { background:var(--green-soft); color:var(--green); } .check { background:var(--red-soft); color:var(--red); }
+    .recommendation { font-size:22px; letter-spacing:-.4px; line-height:1.28; margin:13px 0 12px; } .safety { border-top:1px solid var(--line); padding-top:12px; color:var(--muted); font-size:13px; }
+    .pill-row { display:flex; gap:7px; flex-wrap:wrap; } .pill { padding:6px 9px; background:#f3f7f3; border-radius:999px; color:var(--muted); font-size:12px; } .pill strong { color:var(--ink); }
+    .method-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; } .method { background:#f5f8f5; border-radius:10px; padding:13px; } .method strong { display:block; margin-bottom:6px; font-size:13px; } .method p { font-size:12px; color:var(--muted); }
+    table { width:100%; border-collapse:collapse; font-size:13px; } th,td { padding:9px 8px; text-align:left; border-bottom:1px solid var(--line); } th { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.4px; } td.num { text-align:right; font-variant-numeric:tabular-nums; } .highlight td { background:#f9fbf8; }
+    .replay { display:grid; grid-template-columns:.9fr 1.1fr; gap:18px; align-items:center; } .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; } .stat { background:#f5f8f5; padding:12px; border-radius:10px; } .stat b { display:block; font-size:23px; } .stat span { font-size:11px; color:var(--muted); }
+    .chart { display:flex; align-items:end; gap:10px; height:140px; padding:0 3px; border-bottom:1px solid var(--line); } .bar-group { height:100%; flex:1; display:flex; align-items:end; gap:2px; position:relative; } .bar { min-width:11px; flex:1; border-radius:4px 4px 0 0; } .b-i { background:var(--amber); } .b-m { background:var(--blue); } .month { position:absolute; bottom:-20px; left:0; right:0; text-align:center; color:var(--muted); font-size:10px; } .legend { display:flex; gap:14px; margin-top:27px; color:var(--muted); font-size:12px; } .swatch { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:4px; }
+    .split { display:grid; grid-template-columns:1fr 1fr; gap:18px; } ul { padding-left:18px; margin:9px 0 0; } li { margin:6px 0; color:var(--muted); font-size:13px; line-height:1.4; } .citation { font-size:12px; color:var(--muted); } a { color:var(--blue); }
+    .future { background:#f7f4fb; border-color:#e3dced; } .future h2 { color:var(--purple); } .arrow { color:var(--purple); font-weight:800; }
+    footer { margin-top:18px; color:var(--muted); font-size:12px; }
+    @media (max-width:800px) { header,.layout,.replay,.split { display:block; } .card { margin-bottom:14px; } .span2 { grid-column:auto; } .input-grid,.method-grid { grid-template-columns:1fr; } .badge { display:inline-block; margin-top:12px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div><h1>RLLS · research prototype</h1><p class="subtitle">Low-cost, soil-sensor-confirmed, weather-aware irrigation decision support. RLLS is designed to augment farmer judgement with transparent recommendations.</p></div>
+      <div class="badge">Zone 1 · advisory mode</div>
+    </header>
+    <div class="notice"><strong>Research position.</strong> This prototype demonstrates a decision method and historical sensor replay. It does not claim measured water savings, autonomous valve control, or field deployment.</div>
+
+    <section class="layout" aria-label="RLLS decision simulator">
+      <div class="card">
+        <div class="section-head"><h2>1 · Live decision simulator</h2><span class="small">Inputs are editable</span></div>
+        <div class="input-grid">
+          <label>Soil moisture (%)<input id="moisture" type="number" min="0" max="100" value="19"><div class="field-note">Primary state signal</div></label>
+          <label>Forecast rain (mm)<input id="rain" type="number" min="0" max="100" value="0"><div class="field-note">Rain hold at ≥5 mm</div></label>
+          <label>Max temperature (°C)<input id="temp" type="number" min="-20" max="60" value="31"><div class="field-note">Drying-risk context</div></label>
+          <label>Relative humidity (%)<input id="humidity" type="number" min="0" max="100" value="38"><div class="field-note">Drying-risk context</div></label>
+          <label>Radiation (W/m²)<input id="radiation" type="number" min="0" max="1200" value="620"><div class="field-note">Drying-risk context</div></label>
+          <label>Past irrigation (L)<input id="pastWater" type="number" min="0" max="10000" value="0"><div class="field-note">Logged, not a future input</div></label>
+        </div>
+        <div class="actions" aria-label="Preset scenarios"><button data-s="dry">Dry + no rain</button><button data-s="rain">Dry + rain</button><button data-s="band">Operating band</button><button data-s="wet">Wet soil</button><button data-s="invalid">Sensor fault</button></div>
+      </div>
+      <div class="card result" aria-live="polite">
+        <div><span id="status" class="chip irrigate">Irrigate</span><div id="recommendation" class="recommendation">Soil is dry (19.0%) and no meaningful rainfall is forecast.</div><div id="context" class="pill-row"></div></div>
+        <div id="safety" class="safety">Safety gate: a valid soil reading is required before RLLS can recommend irrigation.</div>
+      </div>
+
+      <div class="card span2">
+        <div class="section-head"><h2>2 · Transparent decision method</h2><span class="small">Sector-specific thresholds must be calibrated locally</span></div>
+        <div class="method-grid">
+          <div class="method"><strong>Sense</strong><p>Read current root-zone soil moisture. Values outside 0–100% become a sensor-check state.</p></div>
+          <div class="method"><strong>Confirm</strong><p>Below 40% enters irrigation logic; 40–60% remains in the operating band; ≥60% prevents irrigation.</p></div>
+          <div class="method"><strong>Anticipate</strong><p>Forecast rain ≥5 mm changes a dry-soil action from irrigate to wait and recheck.</p></div>
+          <div class="method"><strong>Protect</strong><p>The system explains every decision and keeps a human operator responsible for final actuation.</p></div>
+        </div>
+      </div>
+
+      <div class="card span2">
+        <div class="section-head"><h2>3 · Why RLLS is not a weather-only classifier</h2><span class="small">Primary test set · 61 days</span></div>
+        <table aria-label="Weather-only model comparison"><thead><tr><th>Model</th><th class="num">Accuracy</th><th class="num">Precision</th><th class="num">Recall</th><th class="num">F1</th><th>Interpretation</th></tr></thead><tbody>
+          <tr><td>Baseline</td><td class="num">63.9%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>Always predicts “no irrigation”</td></tr>
+          <tr><td>Logistic Regression</td><td class="num">29.5%</td><td class="num">31.6%</td><td class="num">81.8%</td><td class="num">45.6%</td><td>Finds events but creates many false positives</td></tr>
+          <tr><td>Random Forest</td><td class="num">63.9%</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td>Matches baseline; misses every event</td></tr>
+          <tr class="highlight"><td><strong>RLLS response</strong></td><td colspan="4">Does not use those classifiers as a valve command</td><td>Sensor confirmation + rain-aware rules</td></tr>
+        </tbody></table>
+        <p class="small" style="margin-top:11px">Scientific interpretation: a recorded irrigation event reflects human scheduling as well as crop water need. Predicting events from weather alone is therefore not a safe proxy for root-zone water status.</p>
+      </div>
+
+      <div class="card span2">
+        <div class="section-head"><h2>4 · Core RLLS experiment: how much sensing is necessary?</h2><span class="small">One Italian-farm case study · temporal holdout</span></div>
+        <p class="muted" style="margin-bottom:12px">Same Random Forest, same future-dry target, same train/test time split; only the information provided to the model changes. F1 is emphasized because the dry-event class is imbalanced.</p>
+        <table aria-label="RLLS sensing ablation results"><thead><tr><th>Configuration</th><th>Inputs</th><th class="num">Precision</th><th class="num">Recall</th><th class="num">F1</th><th>What this result says</th></tr></thead><tbody>
+          <tr><td>C0 · Weather-only</td><td>6 weather variables</td><td class="num">0.323</td><td class="num">0.193</td><td class="num">0.241</td><td>Weather alone misses most future-dry events.</td></tr>
+          <tr class="highlight"><td><strong>C1 · Soil-only</strong></td><td>1 soil-moisture sensor</td><td class="num">0.423</td><td class="num">0.544</td><td class="num"><strong>0.476</strong></td><td>Best F1 and recall in this split.</td></tr>
+          <tr><td>C2 · Low-cost hybrid</td><td>soil moisture + weather</td><td class="num">0.325</td><td class="num">0.164</td><td class="num">0.218</td><td>Adding inputs did not automatically improve the model.</td></tr>
+          <tr><td>C3 · Sensor-rich</td><td>C2 + soil temperature, EC, pH, past water</td><td class="num">0.397</td><td class="num">0.167</td><td class="num">0.235</td><td>Highest accuracy, but weak dry-event detection.</td></tr>
+        </tbody></table>
+        <p class="small" style="margin-top:11px"><strong>Bounded finding:</strong> for this dataset, target and temporal split, adding more available sensor columns did not improve F1 over soil moisture alone. This is evidence for testing a minimal sensing configuration; it is not proof that one sensor is sufficient for every farm.</p>
+      </div>
+
+      <div class="card span2">
+        <div class="section-head"><h2>5 · Robustness experiment: controlled missingness</h2><span class="small">Random masking sensitivity test</span></div>
+        <div class="split"><div><h3>What was tested</h3><p class="muted" style="margin-top:7px">We progressively hid 0%, 10%, 30%, 50%, and 70% of sensor readings, then re-ran the same prediction task. This models information loss under controlled conditions.</p></div><div><h3>What happened</h3><p class="muted" style="margin-top:7px">Soil-only was strongest when data were complete (F1 0.478), fell sharply at 50% masking (0.110), and recovered only partially at 70% (0.199). Results across the richer configurations also varied and remained low.</p></div></div>
+        <p class="small" style="margin-top:14px"><strong>Interpretation:</strong> availability and missing-data handling are part of system performance. The curve is a case-study stress test, not evidence that sensors in China or elsewhere have the same reliability.</p>
+      </div>
+
+      <div class="card span2">
+        <div class="replay"><div><h2>6 · Historical sensor replay</h2><p class="muted" style="margin-top:8px">179 historical days were replayed from 9,531 cleaned Zone 1 soil-moisture readings. The replay tests controller behaviour; it is not a water-saving or forecast-accuracy claim.</p><div class="stats" style="margin-top:15px"><div class="stat"><b>9,531</b><span>clean sensor readings</span></div><div class="stat"><b>97</b><span>monitor days</span></div><div class="stat"><b>82</b><span>irrigate days</span></div></div></div>
+          <div><div class="chart" aria-label="Monthly RLLS sensor-only replay actions">
+            <div class="bar-group"><div class="bar b-i" style="height:0%"></div><div class="bar b-m" style="height:4%"></div><span class="month">Feb</span></div>
+            <div class="bar-group"><div class="bar b-i" style="height:13%"></div><div class="bar b-m" style="height:81%"></div><span class="month">Mar</span></div>
+            <div class="bar-group"><div class="bar b-i" style="height:29%"></div><div class="bar b-m" style="height:58%"></div><span class="month">Apr</span></div>
+            <div class="bar-group"><div class="bar b-i" style="height:23%"></div><div class="bar b-m" style="height:71%"></div><span class="month">May</span></div>
+            <div class="bar-group"><div class="bar b-i" style="height:26%"></div><div class="bar b-m" style="height:71%"></div><span class="month">Jun</span></div>
+            <div class="bar-group"><div class="bar b-i" style="height:61%"></div><div class="bar b-m" style="height:29%"></div><span class="month">Jul</span></div>
+            <div class="bar-group"><div class="bar b-i" style="height:100%"></div><div class="bar b-m" style="height:0%"></div><span class="month">Aug</span></div>
+            <div class="bar-group"><div class="bar b-i" style="height:13%"></div><div class="bar b-m" style="height:0%"></div><span class="month">Sep</span></div>
+          </div><div class="legend"><span><i class="swatch b-i"></i>Irrigate</span><span><i class="swatch b-m"></i>Monitor</span></div></div>
+        </div>
+      </div>
+
+      <div class="card future span2">
+        <div class="section-head"><h2>7 · RLLS answer and next study</h2><span class="small">Evidence-led conclusion</span></div>
+        <div class="split"><div><h3>Current advisory method</h3><p class="muted" style="margin-top:7px">Current soil moisture <span class="arrow">→</span> threshold rule <span class="arrow">→</span> recommendation.</p></div><div><h3>Next research model</h3><p class="muted" style="margin-top:7px">Current soil moisture + weather + past irrigation <span class="arrow">→</span> predict 24-hour soil moisture <span class="arrow">→</span> predict threshold crossing <span class="arrow">→</span> recommendation.</p></div></div>
+        <p class="small" style="margin-top:14px"><strong>RLLS answer:</strong> begin with a calibrated soil-moisture signal, measure whether extra sensing improves dry-event detection, and make missingness visible before trusting automation. The next study should use exact-clock targets, rolling temporal validation, realistic contiguous outages, local crop/soil calibration, and external farms. Do not use future irrigation volume as an input, because it would leak future information.</p>
+      </div>
+
+      <div class="card span2">
+        <div class="section-head"><h2>Research context</h2><span class="small">Design inspiration, not claims of novelty</span></div>
+        <p class="citation">Existing irrigation DSS research shows the value of combining soil-water status with forecast information and farmer-facing guidance. RLLS contributes a bounded low-cost, transparent prototype using the project’s real sensor data. See <a href="https://www.sciencedirect.com/science/article/abs/pii/S0378377418304542" target="_blank" rel="noreferrer">WIDSSLI</a>, <a href="https://www.sciencedirect.com/science/article/pii/S2405896319325078" target="_blank" rel="noreferrer">soil-moisture forecasting for irrigation recommendation</a>, and <a href="https://www.mdpi.com/2073-4441/15/9/1739" target="_blank" rel="noreferrer">a low-cost IoT olive-grove DSS</a>.</p>
+      </div>
+    </section>
+    <footer>RLLS v2 research prototype · Thresholds shown here are Zone 1 project thresholds: start irrigation below 40%, stop at or above 60%. Field deployment requires sensor calibration, crop/soil-specific thresholds, pump-flow calibration, and farmer approval.</footer>
+  </main>
+  <script>
+    const $ = id => document.getElementById(id);
+    const scenarios = { dry:[19,0,31,38,620,0], rain:[19,8,27,65,280,0], band:[50,0,30,48,580,0], wet:[60,0,27,62,230,12], invalid:[-1,0,30,40,600,0] };
+    function dryingContext(temp, humidity, radiation) {
+      if (temp >= 30 && humidity <= 45 && radiation >= 500) return "High atmospheric drying context";
+      if (temp >= 25 && humidity <= 60) return "Moderate atmospheric drying context";
+      return "Lower atmospheric drying context";
+    }
+    function decide() {
+      const m=Number($("moisture").value), rain=Number($("rain").value), temp=Number($("temp").value), humidity=Number($("humidity").value), radiation=Number($("radiation").value), past=Number($("pastWater").value);
+      let action, message, cls, safety;
+      if (!Number.isFinite(m) || m < 0 || m > 100) [action,message,cls,safety]=["Sensor check","Invalid soil-moisture reading. Keep the valve closed and inspect the probe.","check","Fail-safe state: no automatic watering can be recommended without a valid reading."];
+      else if (m >= 60) [action,message,cls,safety]=["Wait",`Soil moisture ${m.toFixed(1)}% is at or above the 60% stop threshold.`,"wait","Water is not recommended; this prevents over-irrigation."];
+      else if (m < 40 && rain >= 5) [action,message,cls,safety]=["Wait and recheck",`Soil is dry (${m.toFixed(1)}%), but ${rain.toFixed(1)} mm rain is forecast.`,"wait","Delay watering and check the sensor again after the forecast window."];
+      else if (m < 40) [action,message,cls,safety]=["Irrigate",`Soil is dry (${m.toFixed(1)}%) and no meaningful rainfall is forecast.`,"irrigate","A field deployment would still require farmer confirmation and a calibrated run-time limit."];
+      else [action,message,cls,safety]=["Monitor",`Soil moisture ${m.toFixed(1)}% is within the 40–60% operating band.`,"monitor","Continue sensing; no irrigation recommendation is issued."];
+      $("status").textContent=action; $("status").className=`chip ${cls}`; $("recommendation").textContent=message; $("safety").textContent=safety;
+      $("context").innerHTML=`<span class="pill"><strong>${dryingContext(temp,humidity,radiation)}</strong></span><span class="pill">Past irrigation: <strong>${past.toFixed(1)} L</strong></span><span class="pill">Rain-hold rule: <strong>≥5 mm</strong></span>`;
+    }
+    document.querySelectorAll("input").forEach(x => x.addEventListener("input",decide));
+    document.querySelectorAll("button[data-s]").forEach(button => button.addEventListener("click",()=>{ const values=scenarios[button.dataset.s]; ["moisture","rain","temp","humidity","radiation","pastWater"].forEach((id,i)=>$(id).value=values[i]); decide(); }));
+    decide();
+  </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+zone,screen,flagged
+1,range_only,188
+2,range_only,485
+3,range_only,8396
+4,range_only,415
+5,range_only,339
+1,range_plus_flatline,188
+2,range_plus_flatline,485
+3,range_plus_flatline,8396
+4,range_plus_flatline,415
+5,range_plus_flatline,339

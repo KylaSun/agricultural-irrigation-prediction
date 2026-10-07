@@ -1,0 +1,21 @@
+configuration,n_features,feature,source,field_sensor_masked
+C1 Soil-only,1,soil_moisture,现场土壤相对湿度探头（非通用体积含水率）,True
+C2 Low-cost hybrid,7,soil_moisture,现场土壤相对湿度探头（非通用体积含水率）,True
+C2 Low-cost hybrid,7,weather_temp,历史天气再分析（非实时预报）,False
+C2 Low-cost hybrid,7,weather_humidity,历史天气再分析（非实时预报）,False
+C2 Low-cost hybrid,7,weather_rain,历史天气再分析（非实时预报）,False
+C2 Low-cost hybrid,7,weather_pressure,历史天气再分析（非实时预报）,False
+C2 Low-cost hybrid,7,weather_wind_speed,历史天气再分析（非实时预报）,False
+C2 Low-cost hybrid,7,weather_radiation,历史天气再分析（非实时预报）,False
+C3 Sensor-rich,12,soil_moisture,现场土壤相对湿度探头（非通用体积含水率）,True
+C3 Sensor-rich,12,weather_temp,历史天气再分析（非实时预报）,False
+C3 Sensor-rich,12,weather_humidity,历史天气再分析（非实时预报）,False
+C3 Sensor-rich,12,weather_rain,历史天气再分析（非实时预报）,False
+C3 Sensor-rich,12,weather_pressure,历史天气再分析（非实时预报）,False
+C3 Sensor-rich,12,weather_wind_speed,历史天气再分析（非实时预报）,False
+C3 Sensor-rich,12,weather_radiation,历史天气再分析（非实时预报）,False
+C3 Sensor-rich,12,soil_temperature_0-7cm,历史天气服务土温,False
+C3 Sensor-rich,12,soil_temperature_7-18cm,历史天气服务土温，实际 band 7–28cm,False
+C3 Sensor-rich,12,ec,现场 EC 探头,True
+C3 Sensor-rich,12,ph,现场 pH 探头,True
+C3 Sensor-rich,12,water_vol_past_4h,执行器事件 × 分区额定流量；重建过去4h,False

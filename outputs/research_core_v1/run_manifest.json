@@ -1,0 +1,97 @@
+{
+  "protocol": "Research Technical Core v1",
+  "source_hashes": {
+    "data/merged/dataset_zone_1.csv": "994ae706bf45d83bccfbc77c97977bccf44f7bef939d468d9c1458c680ed2bd3",
+    "data/merged/dataset_zone_2.csv": "28cb63167aa3648a8b360fe33c8bcf2d54e42b33454557b4cb47ead541d0c4e5",
+    "data/merged/dataset_zone_3.csv": "a8d198e01256660f8b43603d2df829382345c640a1d1da497f638a232c612372",
+    "data/merged/dataset_zone_4.csv": "503952454fec2358eb99470ea74e3d7971ddb5d047b6257dbb16f96ad3d41cae",
+    "data/merged/dataset_zone_5.csv": "c632e23027bee549e55b84d326cd27577ab92b0cf6265f3dfb5549f225e2c37c",
+    "Soil Moisture, Irrigation Actuator and Weather Dat/02_processed_data/preprocessed/dataset_zone_4_preprocessed.csv": "166d58fbf442a0656621923c5c47c8495a4a19ad362be9daa0b83ccbfaa3ebfe",
+    "Soil Moisture, Irrigation Actuator and Weather Dat/02_processed_data/preprocessed/dataset_zone_5_preprocessed.csv": "305260f0d48a121a1f145fba772a2546df950af0aa8c74c87f526ecc3dc91f4e",
+    "Soil Moisture, Irrigation Actuator and Weather Dat/02_processed_data/preprocessed/dataset_zone_1_preprocessed.csv": "e3c8ce709e89d1a7944bfbcfc0120a2f0166b4198cdf390efad659fd3acb9a89",
+    "Soil Moisture, Irrigation Actuator and Weather Dat/02_processed_data/preprocessed/dataset_zone_2_preprocessed.csv": "7436f9d1b03da0dd4a76cf2005e9ded38881d88d6b85c7f20cf7a3dc561ee5ac",
+    "Soil Moisture, Irrigation Actuator and Weather Dat/02_processed_data/preprocessed/dataset_zone_3_preprocessed.csv": "cc8b6e1e1609f5c749e0e3d05a4b5b237fc4cc79f38e1035d564ea3aabe09424"
+  },
+  "versions": {
+    "python": "3.14.6",
+    "numpy": "2.4.6",
+    "pandas": "3.0.3",
+    "sklearn": "1.9.0"
+  },
+  "configs": {
+    "C1 Soil-only": [
+      "soil_moisture"
+    ],
+    "C2 Low-cost hybrid": [
+      "soil_moisture",
+      "weather_temp",
+      "weather_humidity",
+      "weather_rain",
+      "weather_pressure",
+      "weather_wind_speed",
+      "weather_radiation"
+    ],
+    "C3 Sensor-rich": [
+      "soil_moisture",
+      "weather_temp",
+      "weather_humidity",
+      "weather_rain",
+      "weather_pressure",
+      "weather_wind_speed",
+      "weather_radiation",
+      "soil_temperature_0-7cm",
+      "soil_temperature_7-18cm",
+      "ec",
+      "ph",
+      "water_vol_past_4h"
+    ]
+  },
+  "rf_params": {
+    "n_estimators": 200,
+    "class_weight": "balanced",
+    "min_samples_leaf": 5,
+    "random_state": 42,
+    "n_jobs": 2
+  },
+  "mask_seeds": [
+    101,
+    202,
+    303,
+    404,
+    505
+  ],
+  "mask_rates": [
+    0.0,
+    0.1,
+    0.3,
+    0.5,
+    0.7
+  ],
+  "masked_features": [
+    "soil_moisture",
+    "ec",
+    "ph"
+  ],
+  "target": "range-valid observed soil_moisture at decision+24 elapsed hours < zone threshold",
+  "thresholds": {
+    "1": 40,
+    "2": 40,
+    "3": 60,
+    "4": 80,
+    "5": 50
+  },
+  "timezone": "Europe/Rome converted to UTC; nonexistent/ambiguous timestamps dropped",
+  "train": "March-May; target before June 1",
+  "test": "June-July; target before August 1",
+  "selection": "target available; same rows per configuration; input missingness imputed using training median",
+  "flatline_rule": "same valid observed value for >=24h and >=12 observations; flag from detection onward, causal",
+  "caveat": "Historical weather reanalysis/interpolation; retrospective research, not deployment validation",
+  "elapsed_seconds": 72.2,
+  "verification": {
+    "executed_code_cells": 9,
+    "missingness_rows": 150,
+    "zero_rate_equals_ablation": true,
+    "exact_24h_target": true,
+    "shared_sample_hashes": true
+  }
+}
