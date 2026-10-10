@@ -1,0 +1,19 @@
+.DS_Store
+notebooks/01_data_exploration.before_research_core_v1.ipynb
+notebooks/01_data_exploration.vscode_unsaved_backup.ipynb
+Soil Moisture, Irrigation Actuator and Weather Dat/
+.venv/
+.venv-codex-backup/
+__pycache__/
+.pytest_cache/
+.pytest-tmp/
+.pytest-run-*/
+.pytest-runs/
+*.pyc
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+config/*.local.json
+data/live/*.csv
+!data/live/.gitkeep

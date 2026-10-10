@@ -1,0 +1,6 @@
+{
+  "c1_soil_only": {"kind": "mock", "path": null, "task": "UNCONFIRMED: future_dry_or_next_day_irrigation", "threshold": 0.5},
+  "c2_low_cost_hybrid": {"kind": "mock", "path": null, "task": "UNCONFIRMED: future_dry_or_next_day_irrigation", "threshold": 0.5},
+  "c3_sensor_rich": {"kind": "mock", "path": null, "task": "UNCONFIRMED: future_dry_or_next_day_irrigation", "threshold": 0.5},
+  "weather_only": {"kind": "mock", "path": null, "task": "UNCONFIRMED: demo_baseline_only", "threshold": 0.5}
+}

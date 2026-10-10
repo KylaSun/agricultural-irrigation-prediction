@@ -1,0 +1,30 @@
+{
+  "contract_status": "PROVISIONAL_DEMO_ONLY",
+  "note": "C1/C2/C3 mirror src/research_core_v1.py exactly. Four SEN0308 probes are four measurement positions; they are not four model features. Weather-only is an additional demo baseline, not a research C1/C2/C3 configuration.",
+  "modes": {
+    "c1_soil_only": {
+      "label": "C1 Soil-only",
+      "feature_order": ["soil_moisture"],
+      "field_sources": {"soil_moisture": "selected_sen0308_or_explicit_composite"},
+      "model_config": "c1_soil_only"
+    },
+    "c2_low_cost_hybrid": {
+      "label": "C2 Low-cost hybrid",
+      "feature_order": ["soil_moisture", "weather_temp", "weather_humidity", "weather_rain", "weather_pressure", "weather_wind_speed", "weather_radiation"],
+      "field_sources": {"soil_moisture": "selected_sen0308_or_explicit_composite", "weather_*": "weather_api_pending_validation"},
+      "model_config": "c2_low_cost_hybrid"
+    },
+    "c3_sensor_rich": {
+      "label": "C3 Sensor-rich",
+      "feature_order": ["soil_moisture", "weather_temp", "weather_humidity", "weather_rain", "weather_pressure", "weather_wind_speed", "weather_radiation", "soil_temperature_0-7cm", "soil_temperature_7-18cm", "ec", "ph", "water_vol_past_4h"],
+      "field_sources": {"soil_moisture": "selected_sen0308_or_explicit_composite", "weather_*": "weather_api_pending_validation", "soil_temperature_*": "weather_service_pending_contract", "ec": "not_purchased", "ph": "not_purchased", "water_vol_past_4h": "irrigation_log_not_available"},
+      "model_config": "c3_sensor_rich"
+    },
+    "weather_only": {
+      "label": "Weather-only baseline (not C1-C3)",
+      "feature_order": ["weather_temp", "weather_humidity", "weather_rain", "weather_pressure", "weather_wind_speed", "weather_radiation"],
+      "field_sources": {"weather_*": "weather_api_pending_validation"},
+      "model_config": "weather_only"
+    }
+  }
+}

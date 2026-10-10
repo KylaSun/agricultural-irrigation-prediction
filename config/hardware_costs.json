@@ -1,0 +1,23 @@
+{
+  "currency": "CNY",
+  "note": "Final purchased configuration. 0 means quotation pending, not free hardware.",
+  "items": {
+    "esp32_devkitc_v4": {"quantity": 1, "unit_cost": 0},
+    "sen0308": {"quantity": 4, "unit_cost": 0},
+    "dupont_wire_sets": {"quantity": 3, "unit_cost": 0},
+    "breadboard_400": {"quantity": 2, "unit_cost": 0},
+    "usb_data_cable": {"quantity": 1, "unit_cost": 0},
+    "waterproof_labels": {"quantity": 1, "unit_cost": 0},
+    "depth_ruler": {"quantity": 1, "unit_cost": 0}
+  },
+  "mode_components": {
+    "c1_soil_only": {"esp32_devkitc_v4": 1, "sen0308": 4},
+    "c2_low_cost_hybrid": {"esp32_devkitc_v4": 1, "sen0308": 4},
+    "c3_sensor_rich": {"esp32_devkitc_v4": 1, "sen0308": 4},
+    "weather_only": {}
+  },
+  "unavailable_for_current_purchase": {
+    "c3_sensor_rich": ["ec", "ph", "water_vol_past_4h"],
+    "note": "C3 also needs two soil-temperature fields from a weather service; the online contract is not yet validated."
+  }
+}
