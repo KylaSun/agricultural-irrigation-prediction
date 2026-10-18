@@ -1,5 +1,8 @@
 // RLLS low-cost irrigation demo — four SEN0308 JSON Lines producer.
-// Final hardware: ESP32-DevKitC V4 / ESP32-WROOM-32 + 4 x SEN0308.
+// Current hardware: ESP32-DevKitC V4 / ESP32-WROOM-32 + 4 x SEN0308.
+// Bench programming/collection uses PC USB. Standalone operation may use a
+// regulated 5 V solar-manager output, but never connect both power sources
+// unless the power path has been explicitly isolated and verified.
 // USB Serial carries data only. Do not print ordinary debug text to Serial.
 // Use ../esp32_soil_calibration/esp32_soil_calibration.ino to measure endpoints.
 
@@ -9,15 +12,25 @@ static const uint32_t BAUD_RATE = 115200;
 static const uint32_t SAMPLE_INTERVAL_MS = 1000;
 static const uint8_t PROBE_COUNT = 4;
 static const uint8_t ADC_SAMPLES = 16;
-static const bool USE_SIMULATED_VALUES = true;
+static const bool USE_SIMULATED_VALUES = false;
 
-// ADC1 inputs. Verify the silkscreen/pinout of the delivered board before wiring.
-static const int SOIL_PINS[PROBE_COUNT] = {32, 33, 34, 35};
+// Keep all four true for the final installation. For first-probe bring-up use:
+// {true, false, false, false}. Disabled probes are emitted as JSON null with
+// status "disabled"; missing values must never be represented as zero.
+static const bool PROBE_ENABLED[PROBE_COUNT] = {true, true, true, true};
 
-// PROVISIONAL placeholders. Replace every pair with that probe's measured
-// endpoints; do not copy one probe's calibration to the other probes.
-static const int DRY_RAW[PROBE_COUNT] = {3200, 3200, 3200, 3200};
-static const int WET_RAW[PROBE_COUNT] = {1400, 1400, 1400, 1400};
+// Current test wiring: soil_01/02/03 use ADC1; soil_04 uses GPIO26 (ADC2).
+// ADC2 conflicts with Wi-Fi on classic ESP32. This USB/Serial firmware does
+// not enable Wi-Fi; revisit soil_04 wiring before adding ESP32-side Wi-Fi.
+// Always verify the silkscreen/pinout of the delivered board before wiring.
+static const int SOIL_PINS[PROBE_COUNT] = {32, 33, 34, 26};
+
+// PROVISIONAL bench calibration captured on 2026-10-18. DRY_RAW is the
+// measured dry reference and WET_RAW is the DFRobot water endpoint. Repeat
+// calibration after the final power wiring, insertion depth and soil protocol
+// are fixed; do not copy one probe's endpoints to another probe.
+static const int DRY_RAW[PROBE_COUNT] = {1907, 959, 408, 740};
+static const int WET_RAW[PROBE_COUNT] = {0, 0, 0, 0};
 
 uint32_t lastSampleMs = 0;
 
@@ -39,6 +52,12 @@ float soilPercentFromRaw(uint8_t index, int raw) {
 }
 
 void readSoilProbe(uint8_t index, int &raw, float &pct, const char *&status) {
+  if (!PROBE_ENABLED[index]) {
+    raw = 0;  // Internal placeholder only; the JSON writer emits null below.
+    pct = NAN;
+    status = "disabled";
+    return;
+  }
   if (USE_SIMULATED_VALUES) {
     raw = 2350 + int(index * 35) + int((millis() / 1000) % 20);
     pct = soilPercentFromRaw(index, raw);
@@ -82,7 +101,7 @@ void loop() {
   Serial.print(now);
   for (uint8_t i = 0; i < PROBE_COUNT; ++i) {
     Serial.print(",\"soil_"); Serial.print(i + 1); Serial.print("_raw\":");
-    Serial.print(raw[i]);
+    if (PROBE_ENABLED[i]) Serial.print(raw[i]); else Serial.print("null");
     Serial.print(",\"soil_"); Serial.print(i + 1); Serial.print("_moisture_pct\":");
     printNullableFloat(pct[i]);
     Serial.print(",\"soil_"); Serial.print(i + 1); Serial.print("_status\":\"");

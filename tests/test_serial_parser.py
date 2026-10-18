@@ -24,6 +24,17 @@ def test_parse_valid_line():
     assert parsed.values["soil_4_moisture_pct"] == 46.0
 
 
+def test_disabled_probe_is_missing_not_zero():
+    parsed = parse_serial_line(json.dumps(wire(
+        soil_2_raw=None,
+        soil_2_moisture_pct=None,
+        soil_2_status="disabled",
+    )))
+    assert parsed.values["soil_2_raw"] is None
+    assert parsed.values["soil_2_moisture_pct"] is None
+    assert parsed.values["soil_2_status"] == "disabled"
+
+
 def test_wrong_field_count_is_clear():
     value = wire()
     del value["soil_3_raw"]

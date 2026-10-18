@@ -12,7 +12,7 @@ firmware/esp32_soil_calibration/esp32_soil_calibration.ino
 
 ## 使用步骤
 
-1. 核对 GPIO32、33、34、35，以及四支探头的 3V3 和公共 GND。
+1. 核对 GPIO32、33、34、26，以及四支探头的 3V3 和公共 GND。`soil_04` 当前改用 GPIO26（经典 ESP32 的 ADC2），校准程序不启用 Wi-Fi；如果未来在 ESP32 端启用 Wi-Fi，需要重新评估这一路 ADC 接线。
 2. 上传校准程序。
 3. 打开 Arduino Serial Monitor，将波特率设为 `115200`；行尾选项任意。
 4. 输入 `m`，观察四支探头的实时原始值；再次输入 `m` 停止。
@@ -22,6 +22,15 @@ firmware/esp32_soil_calibration/esp32_soil_calibration.ino
 8. 输入 `w`，记录湿端。
 9. 输入 `p`，复制输出的 `DRY_RAW` 和 `WET_RAW` 两行。
 10. 将两行替换到正式固件中，再重新上传正式固件。
+
+当前仓库已经写入 2026-10-18 的一次实测结果：
+
+```cpp
+static const int DRY_RAW[PROBE_COUNT] = {1907, 959, 408, 740};
+static const int WET_RAW[PROBE_COUNT] = {0, 0, 0, 0};
+```
+
+其中湿端是 DFRobot 官方方法中的水端。四路水端为 0 与该方法一致，但干端差异较大，因此这组值仅作为暂定实验校准。太阳能供电、固定土壤、插入深度和接线全部确定后，应完整重复至少一次干端/湿端测量；复测完成前不要把这些百分比解释为真实体积含水率。
 
 ## 串口命令
 
@@ -34,13 +43,6 @@ firmware/esp32_soil_calibration/esp32_soil_calibration.ino
 | `p` | 打印可复制的数组和干湿端差值 |
 | `r` | 清除本次上电保存在 RAM 中的结果 |
 | `h` | 重新显示帮助 |
-
-示例输出：
-
-```cpp
-static const int DRY_RAW[PROBE_COUNT] = {3180, 3250, 3165, 3210};
-static const int WET_RAW[PROBE_COUNT] = {1460, 1510, 1435, 1490};
-```
 
 ## 如何判断结果是否需要重测
 
@@ -55,3 +57,4 @@ static const int WET_RAW[PROBE_COUNT] = {1460, 1510, 1435, 1490};
 - 得到的是两点校准后的相对湿度，不是真实体积含水率。
 - 正式实验应记录土壤类型、插入深度、干湿状态定义、日期、供电方式和校准人员。
 - 不要将接头、ESP32 或裸露导线浸水。
+- 校准、烧录和电脑采集统一使用电脑 USB 给 ESP32 供电，并断开太阳能管理模块到 ESP32 的 5 V 输出，避免双电源倒灌。

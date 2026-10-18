@@ -8,12 +8,15 @@
     "breadboard_400": {"quantity": 2, "unit_cost": 0},
     "usb_data_cable": {"quantity": 1, "unit_cost": 0},
     "waterproof_labels": {"quantity": 1, "unit_cost": 0},
-    "depth_ruler": {"quantity": 1, "unit_cost": 0}
+    "depth_ruler": {"quantity": 1, "unit_cost": 0},
+    "solar_panel_6v_6w": {"quantity": 1, "unit_cost": 0},
+    "dfrobot_solar_manager_5v": {"quantity": 1, "unit_cost": 0},
+    "battery_18650_3v7": {"quantity": 1, "unit_cost": 0}
   },
   "mode_components": {
-    "c1_soil_only": {"esp32_devkitc_v4": 1, "sen0308": 4},
-    "c2_low_cost_hybrid": {"esp32_devkitc_v4": 1, "sen0308": 4},
-    "c3_sensor_rich": {"esp32_devkitc_v4": 1, "sen0308": 4},
+    "c1_soil_only": {"esp32_devkitc_v4": 1, "sen0308": 4, "solar_panel_6v_6w": 1, "dfrobot_solar_manager_5v": 1, "battery_18650_3v7": 1},
+    "c2_low_cost_hybrid": {"esp32_devkitc_v4": 1, "sen0308": 4, "solar_panel_6v_6w": 1, "dfrobot_solar_manager_5v": 1, "battery_18650_3v7": 1},
+    "c3_sensor_rich": {"esp32_devkitc_v4": 1, "sen0308": 4, "solar_panel_6v_6w": 1, "dfrobot_solar_manager_5v": 1, "battery_18650_3v7": 1},
     "weather_only": {}
   },
   "unavailable_for_current_purchase": {

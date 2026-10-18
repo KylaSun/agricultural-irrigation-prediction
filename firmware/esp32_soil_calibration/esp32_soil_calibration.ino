@@ -9,7 +9,9 @@ static const uint8_t PROBE_COUNT = 4;
 static const uint8_t ADC_SAMPLES_PER_READING = 16;
 static const uint8_t CAPTURE_COUNT = 30;
 static const uint16_t CAPTURE_PAUSE_MS = 100;
-static const int SOIL_PINS[PROBE_COUNT] = {32, 33, 34, 35};
+// Current test wiring: soil_04 is connected to GPIO26.
+// GPIO26 is ADC2 on classic ESP32; this calibration sketch does not use Wi-Fi.
+static const int SOIL_PINS[PROBE_COUNT] = {32, 33, 34, 26};
 
 int dryRaw[PROBE_COUNT] = {0, 0, 0, 0};
 int wetRaw[PROBE_COUNT] = {0, 0, 0, 0};
@@ -141,7 +143,8 @@ void setup() {
   }
   delay(500);
   Serial.println("RLLS SEN0308 four-probe quick calibration");
-  Serial.println("Verify GPIO32/33/34/35 and 3V3/GND wiring before use.");
+  Serial.println("Verify GPIO32/33/34/26 and 3V3/GND wiring before use.");
+  Serial.println("Power SEN0308 probes from ESP32 3V3; never feed solar-manager 5V into an ADC pin.");
   printHelp();
 }
 

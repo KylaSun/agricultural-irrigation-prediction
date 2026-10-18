@@ -21,6 +21,23 @@ from rlls_demo.preprocessing import process_record
 from rlls_demo.schema import feature_order, load_modes
 
 
+PROBE_GPIO = {
+    "soil_1": 32,
+    "soil_2": 33,
+    "soil_3": 34,
+    "soil_4": 26,
+}
+
+
+def probe_display_name(value: str) -> str:
+    if value == "soil_composite":
+        return "四探头综合值（有效值中位数）"
+    gpio = PROBE_GPIO.get(value)
+    probe_number = value.removeprefix("soil_")
+    base_name = f"soil_{int(probe_number):02d}" if probe_number.isdigit() else value
+    return f"{base_name} · GPIO{gpio}" if gpio is not None else base_name
+
+
 st.set_page_config(page_title="RLLS Irrigation Lab", page_icon="💧", layout="wide")
 st.markdown(
     """
@@ -197,12 +214,17 @@ with st.sidebar:
     active_probe = st.selectbox(
         "模型土壤湿度来源",
         source_options,
-        format_func=lambda value: "四探头综合值（有效值中位数）" if value == "soil_composite" else value.replace("soil_", "soil_0"),
+        format_func=probe_display_name,
     )
     enabled = {}
-    for key, label in [(f"soil_{index}", f"soil_0{index}") for index in range(1, 5)]:
-        enabled[key] = st.toggle(label, value=mode != "weather_only", disabled=mode == "weather_only")
+    for key in PROBE_GPIO:
+        enabled[key] = st.toggle(
+            probe_display_name(key),
+            value=mode != "weather_only",
+            disabled=mode == "weather_only",
+        )
     st.caption("可选单测点或综合值。综合值至少需要 2 支有效探头，使用中位数；关闭开关会真实影响输入。")
+    st.caption("当前测试接线：soil_01→GPIO32、soil_02→GPIO33、soil_03→GPIO34、soil_04→GPIO26。GPIO26 属于 ADC2；ESP32 端启用 Wi-Fi 前需重新确认采样方案。")
     st.button("刷新数据", width="stretch")
 
 try:
@@ -249,7 +271,12 @@ try:
         st.subheader("最新现场读数")
         probe_columns = st.columns(4)
         for index, column in enumerate(probe_columns, start=1):
-            column.metric(f"soil_0{index} · %", fmt(processed.record.get(f"soil_{index}_moisture_pct")))
+            probe_key = f"soil_{index}"
+            column.metric(
+                probe_display_name(probe_key),
+                fmt(processed.record.get(f"{probe_key}_moisture_pct"), "%"),
+                help="独立校准后的相对含水率指标，不等同于通用体积含水率 VWC。",
+            )
         composite_value, composite_detail = st.columns([1, 3])
         composite_value.metric(
             "综合值 · %",
@@ -286,7 +313,7 @@ try:
         result_value = f"类别 {prediction.prediction}"
         probability_text = f"{prediction.probability:.1%}" if prediction.probability is not None else "N/A"
         soil_source = "不使用土壤探头" if "soil_moisture" not in order else (
-            "四探头综合中位数" if active_probe == "soil_composite" else active_probe.replace("soil_", "soil_0")
+            "四探头综合中位数" if active_probe == "soil_composite" else probe_display_name(active_probe)
         )
         if prediction.is_mock:
             panel_class = "prediction-panel"
@@ -347,7 +374,7 @@ try:
         cost_label = f"¥{cost:.2f}" if components and all(value > 0 for value in quoted) else "无现场硬件" if not components else "待录入报价"
         unavailable = COSTS.get("unavailable_for_current_purchase", {}).get(mode_key, [])
         comparison.append({
-            "mode": definition["label"], "field_count": len(fields), "selected_probe": active_probe if "soil_moisture" in fields else "not used",
+            "mode": definition["label"], "field_count": len(fields), "selected_probe": probe_display_name(active_probe) if "soil_moisture" in fields else "not used",
             "available_inputs": sum(value is not None for value in candidate.features.values()),
             "current_purchase_gap": ", ".join(unavailable) if unavailable else "none",
             "quality": candidate.quality_flag, "prediction": f"MOCK {result.prediction}", "probability": f"{result.probability:.1%}", "hardware_cost": cost_label,
