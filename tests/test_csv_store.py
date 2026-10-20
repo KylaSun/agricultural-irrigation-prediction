@@ -13,6 +13,8 @@ def test_csv_round_trip_preserves_missing_as_empty(tmp_path):
 
 def test_collection_csv_contains_every_research_model_feature():
     assert "timestamp_utc" in CSV_FIELDS
+    assert "timestamp_source" in CSV_FIELDS
+    assert "boot_id" in CSV_FIELDS
     assert "soil_composite_pct" in CSV_FIELDS
     assert "soil_composite_count" in CSV_FIELDS
     assert "soil_composite_spread_pct" in CSV_FIELDS

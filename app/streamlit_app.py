@@ -258,7 +258,7 @@ try:
     order = feature_order(mode, MODES)
     adapter = adapter_for(mode, tuple(order))
     prediction = adapter.predict(processed.features)
-    last_update = raw_latest.get("timestamp_utc", "unknown")
+    last_update = raw_latest.get("timestamp_utc") or "离线记录：无 RTC 时间"
 
     status_class = "bad" if processed.quality_flag in {"invalid", "out_of_range"} else "warn" if processed.quality_flag in {"missing", "stale", "simulated"} else ""
     st.markdown(
@@ -299,9 +299,13 @@ try:
             trend_fields.append("soil_composite_pct")
         if trend_fields:
             chart = frame.tail(60).copy()
-            if "timestamp_utc" in chart:
+            if "timestamp_utc" in chart and chart["timestamp_utc"].notna().any():
                 chart["timestamp_utc"] = pd.to_datetime(chart["timestamp_utc"], errors="coerce", utc=True)
                 chart = chart.set_index("timestamp_utc")
+            elif "device_ms" in chart:
+                chart["device_ms"] = pd.to_numeric(chart["device_ms"], errors="coerce")
+                chart = chart.set_index("device_ms")
+                chart.index.name = "device_ms（本次开机毫秒）"
             st.line_chart(chart[trend_fields], height=260)
         else:
             st.info("当前数据没有可绘制的趋势字段。")

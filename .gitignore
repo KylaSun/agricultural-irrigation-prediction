@@ -16,4 +16,6 @@ __pycache__/
 .streamlit/secrets.toml
 config/*.local.json
 data/live/*.csv
+data/live/*.jsonl
 !data/live/.gitkeep
+.venv-collector/

@@ -49,6 +49,9 @@ def validate(path: Path) -> list[str]:
 
     for row_number, row in enumerate(rows, start=2):
         timestamp = row.get("timestamp_utc", "")
+        timestamp_source = row.get("timestamp_source", "")
+        if not timestamp and timestamp_source == "unavailable_no_rtc":
+            continue
         try:
             parsed = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
             if parsed.tzinfo is None:
@@ -72,6 +75,7 @@ def main() -> int:
     print("- collector/replay columns are complete")
     print("- C1/C2/C3 feature names are present")
     print("- timestamp_utc values include timezone information")
+    print("  (or are explicitly blank with timestamp_source=unavailable_no_rtc)")
     print("NOTE: this is not the historical training-table format; see docs/CSV_COMPATIBILITY_CN.md")
     return 0
 

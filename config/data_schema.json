@@ -4,7 +4,10 @@
   "missing_representation": {"json": null, "csv": ""},
   "status_values": ["ok", "simulated", "disabled", "timeout", "read_error", "out_of_range", "stale"],
   "fields": {
-    "timestamp_utc": {"type": "datetime", "unit": "UTC ISO-8601", "nullable": false, "range": null, "meaning": "电脑端收到记录的 UTC 时间"},
+    "timestamp_utc": {"type": "datetime", "unit": "UTC ISO-8601", "nullable": true, "range": null, "meaning": "测量 UTC；实时串口为电脑接收时间，当前无 RTC 的离线记录为空，绝不以 0 或下载时间代替"},
+    "timestamp_source": {"type": "string", "unit": null, "nullable": false, "range": ["computer_receive", "unavailable_no_rtc"], "meaning": "timestamp_utc 的来源；区分电脑接收时间与无 RTC 的离线记录"},
+    "downloaded_at_utc": {"type": "datetime", "unit": "UTC ISO-8601", "nullable": true, "range": null, "meaning": "板载日志下载到电脑的时间，不是测量时间"},
+    "boot_id": {"type": "string", "unit": null, "nullable": true, "range": null, "meaning": "板载日志的启动分段标识；同一分段内结合 device_ms 排序，不提供跨重启真实时间"},
     "device_ms": {"type": "integer", "unit": "ms", "nullable": false, "range": [0, 4294967295], "meaning": "ESP32 启动后的 millis()"},
     "soil_1_raw": {"type": "integer", "unit": "ADC count", "nullable": true, "range": [0, 4095], "meaning": "SEN0308 soil_01 原始 ADC"},
     "soil_1_moisture_pct": {"type": "number", "unit": "% relative", "nullable": true, "range": [0, 100], "meaning": "soil_01 独立校准后的相对湿度；不是通用体积含水率"},

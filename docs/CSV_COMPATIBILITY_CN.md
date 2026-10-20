@@ -15,7 +15,7 @@ Demo 采集 CSV 包含 C1、C2、C3 所需的全部**特征列名**，因此可�
 
 | 层级 | 时间字段 | 土壤湿度 | 其他内容 | 是否可直接互换 |
 |---|---|---|---|---|
-| ESP32 采集/Demo CSV | `timestamp_utc`，带时区 | 四支原始值、校准值、综合值及最终 `soil_moisture` | 设备时间、状态、质量标记 | 供 Demo 使用 |
+| ESP32 采集/Demo CSV | 实时记录的 `timestamp_utc` 带时区；无 RTC 的板载离线记录明确留空 | 四支原始值、校准值、综合值及最终 `soil_moisture` | 设备时间、时间来源、启动分段、状态、质量标记 | 供 Demo 使用 |
 | GitHub merged CSV | `ts`，Europe/Rome 本地 10 分钟时间 | 单个分区的 `soil_moisture` | 历史天气、EC、pH、灌溉量 | 不可直接替代采集 CSV |
 | GitHub research master | `decision_ts`/`target_ts`，UTC | 清洗后的单分区 `soil_moisture` | zone、threshold、target、`future_dry` | 是研究评估表，不是实时输入表 |
 
@@ -43,4 +43,4 @@ Demo 采集 CSV 包含 C1、C2、C3 所需的全部**特征列名**，因此可�
 python scripts\validate_csv_contract.py data\replay\simulated_normal.csv
 ```
 
-校验器检查采集层表头、C1/C2/C3 特征是否齐全，以及 `timestamp_utc` 是否带时区。它不会宣称现场数据与训练分布相同。
+校验器检查采集层表头和 C1/C2/C3 特征是否齐全。实时记录的 `timestamp_utc` 必须带时区；板载离线记录只在 `timestamp_source=unavailable_no_rtc` 时允许 UTC 为空。它不会宣称现场数据与训练分布相同。

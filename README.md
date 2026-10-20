@@ -10,6 +10,8 @@
 
 四路土壤湿度探头 → ESP32 → USB/Serial（JSON Lines）→ Python/pyserial → CSV → 数据预处理 → ModelAdapter → Streamlit
 
+太阳能独立运行时，正式固件还会每 60 秒把一条记录追加到 ESP32 板载 LittleFS。之后接回电脑，可通过 USB 串口下载为 JSONL 和 CSV。板载 Flash 适合 Demo 和短期记录，不替代 SD 卡；空间满后固件会停止追加，不会自动覆盖旧记录。
+
 太阳能链路只负责供电，当前没有电池电量、电压或充电电流遥测。PC 串口采集仍需要 USB 数据连接；为避免双电源倒灌，烧录和 PC 采集时应断开太阳能模块到 ESP32 的 5 V 输出。
 
 ## 主要目录
@@ -45,6 +47,7 @@ python -m venv .venv
 3. 正式固件默认 `USE_SIMULATED_VALUES=false`，每秒输出一条四探头 JSONL。
 4. 烧录后以 115200 波特率连接，采集程序通过 `--port COMx` 指定 Windows 串口。
 5. 太阳能接线、供电切换、烧录、采集和验收全过程见 `docs/SOLAR_POWER_WORKFLOW_CN.md`。
+6. 板载日志的下载、核对和清空步骤见 `docs/LOCAL_FLASH_LOG_CN.md`；当前无 RTC，离线记录只能用 `boot_id + device_ms` 保留顺序，真实 UTC 留空。
 
 详细说明见：
 
@@ -52,6 +55,8 @@ python -m venv .venv
 - `docs/QUICK_CALIBRATION_CN.md`
 - `docs/WIRING_TEMPLATE_CN.md`
 - `docs/CSV_COMPATIBILITY_CN.md`
+- `docs/LOCAL_FLASH_LOG_CN.md`
+- `docs/DATA_DOWNLOAD_HANDOFF_CN.md`：给软件负责人的板载日志下载、协议、校验与交接说明。
 - `docs/DEPENDENCIES_CN.md`
 
 ## 当前边界
@@ -60,6 +65,8 @@ python -m venv .venv
 - 正式模型尚需模型文件、精确特征契约、训练预处理、阈值和固定测试样例。
 - 当前探头校准值来自一次实物测量，但尚未完成重复性、最终土壤、固定深度和最终供电条件验证，因此只能视为暂定实验校准。
 - 当前水端校准值为 0，因此现场 ADC=0 既可能代表水端，也可能代表短接/断线；单靠模拟值无法自动区分，必须结合接线检查和重复测量。
+- 当前 ESP32 没有 RTC。离线日志不伪造采样 UTC；若设备重启，`device_ms` 会归零，并由新的 `boot_id` 分段。跨断电的准确时间需要外接 RTC 或可靠联网校时。
+- LittleFS 的实际容量取决于 Arduino IDE 所选 Partition Scheme。当前日志每 60 秒保存一次，达到安全上限后停止写入；禁止在尚未核对电脑下载文件前执行清空。
 - 太阳能充电模块精确 SKU、硬件版本、18650 容量及保护类型仍需从实物标签回填。
 - 三种传感器模式会实际改变传给模型的字段；最终字段仍必须与对应模型训练契约一致。
 

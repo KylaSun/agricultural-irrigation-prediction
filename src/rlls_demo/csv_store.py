@@ -6,7 +6,7 @@ from typing import Any, Iterable
 
 
 CSV_FIELDS = [
-    "timestamp_utc", "device_ms",
+    "timestamp_utc", "timestamp_source", "downloaded_at_utc", "boot_id", "device_ms",
     "soil_1_raw", "soil_1_moisture_pct", "soil_1_status",
     "soil_2_raw", "soil_2_moisture_pct", "soil_2_status",
     "soil_3_raw", "soil_3_moisture_pct", "soil_3_status",
